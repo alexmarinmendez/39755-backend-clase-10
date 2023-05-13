@@ -33,4 +33,27 @@ app.get('/logout', (req, res) => {
     return res.send('Logout Ok')
 })
 
+const DB = [ {
+    username: 'coder',
+    password: 'secret',
+    role: 'admin'
+}]
+
+const auth = (req, res, next) => {
+    if (req.session.user) return next()
+    return res.send('Error de authentication')
+}
+
+app.get('/api/login', (req, res) => {
+    const { username, password } = req.query
+    const user = DB.find(u => u.username === username && u.password === password)
+    if (!user) return res.send('Invalid credentials')
+    req.session.user = user
+    res.send('Login success!')
+})
+
+app.get('/api/private', auth, (req, res) => {
+    res.send('Bienvenido!!')
+})
+
 app.listen(8080, () => console.log('Server Up'))
