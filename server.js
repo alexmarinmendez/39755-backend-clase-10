@@ -1,6 +1,6 @@
 import express from 'express'
 import session from 'express-session'
-import FileStore from 'session-file-store'
+import MongoStore from 'connect-mongo'
 
 const DB = [ {
     username: 'coder',
@@ -8,15 +8,15 @@ const DB = [ {
     role: 'admin'
 }]
 
-const fileStore = FileStore(session)
-
 const app = express()
 app.use(session({
-    store: new fileStore({
-        path: './sessions',
-        // ttl: 10,
-        retries: 2
-
+    store: MongoStore.create({
+            mongoUrl: 'mongodb://localhost:27017',
+            dbName: 'marathon-sessions',
+            mongoOptions: {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            }
     }),
     secret: 'victoriasecret',
     resave: true,
