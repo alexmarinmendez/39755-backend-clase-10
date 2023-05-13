@@ -1,5 +1,6 @@
 import express from 'express'
 import session from 'express-session'
+import FileStore from 'session-file-store'
 
 const DB = [ {
     username: 'coder',
@@ -7,8 +8,16 @@ const DB = [ {
     role: 'admin'
 }]
 
+const fileStore = FileStore(session)
+
 const app = express()
 app.use(session({
+    store: new fileStore({
+        path: './sessions',
+        // ttl: 10,
+        retries: 2
+
+    }),
     secret: 'victoriasecret',
     resave: true,
     saveUninitialized: true
